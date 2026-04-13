@@ -1,5 +1,8 @@
-const { text } = require('body-parser');
+
 const sender = require('../config/email.config');
+const TicketRepository = require('../respository/ticket-respository');
+
+const repo = new TicketRepository();
 
 const sendBasicEmail = async (mailFrom, mailTo, mailSubject, mailBody) => {
  try {
@@ -11,10 +14,48 @@ const sendBasicEmail = async (mailFrom, mailTo, mailSubject, mailBody) => {
     });
     console.log(response);
    } catch (error) {
-        console.log(error);
+        console.log(error); 
    } 
+
 }
 
+const fetchPendingEmails = async (timestamp) => {
+    try {
+        
+        const response = await repo.getAll({status:"PENDING"});
+        return response;
+        
+    } catch (error) {
+         console.log(error);
+         
+    }
+}
+
+const createNotification = async (data) => {
+    try {
+        const response = await repo.create(data);
+        return response;
+
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
+const updateTicket = async (ticketId, data) => {
+    try {
+        const response = await repo.update(ticketId, data);
+        return response;
+    } catch (error) { 
+        console.log(error);
+        
+    }
+}
+
+
 module.exports = {
-    sendBasicEmail
+    sendBasicEmail,
+    fetchPendingEmails,
+    createNotification,
+    updateTicket
 }
